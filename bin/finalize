@@ -7,10 +7,27 @@ DEPS_DIR=$3
 DEPS_IDX=$4
 PROFILE_DIR=${5:-}
 
-echo "BUILD_DIR: ${BUILD_DIR}"
-echo "CACHE_DIR: ${CACHE_DIR}"
-echo "DEPS_DIR: ${DEPS_DIR}"
-echo "DEPS_IDX: ${DEPS_IDX}"
-echo "PROFILE_DIR: ${PROFILE_DIR}"
+apt_dir=${DEPS_DIR}/0
 
+profile="${PROFILE_DIR}/000_multi-supply.sh"
+
+export PATH=${PATH:-}:${apt_dir}/bin
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}:${apt_dir}/lib
+export LIBRARY_PATH=${LIBRARY_PATH:-}:${apt_dir}/lib
+export INCLUDE_PATH=${INCLUDE_PATH:-}:${apt_dir}/include
+export CPATH=${CPATH:-}:${apt_dir}/include
+export CPPPATH=${CPPPATH:-}:${apt_dir}/include
+export PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-}:${apt_dir}/pkgconfig
+
+cat <<EOF > $profile
+export PATH=${PATH:-}:\${DEPS_DIR}/0/bin
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}:\${DEPS_DIR}/0/lib
+export LIBRARY_PATH=${LIBRARY_PATH:-}:\${DEPS_DIR}/0/lib
+export INCLUDE_PATH=${INCLUDE_PATH:-}:\${DEPS_DIR}/0/include
+export CPATH=${CPATH:-}:\${DEPS_DIR}/0/include
+export CPPPATH=${CPPPATH:-}:\${DEPS_DIR}/0/include
+export PKG_CONFIG_PATH=${PKG_CONFIG_PATH:-}:\${DEPS_DIR}/0/pkgconfig
+EOF
+
+crystal -v
 crystal ${BASH_SOURCE%/*}/finalize.cr $BUILD_DIR $CACHE_DIR
